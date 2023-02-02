@@ -1,9 +1,82 @@
-// 🐨 you'll need to import react and createRoot from react-dom up here
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {Dialog} from '@reach/dialog'
+import '@reach/dialog/styles.css'
+import {Logo} from './components/logo'
 
-// 🐨 you'll also need to import the Logo component from './components/logo'
+const App = () => {
+  const [openModal, setOpenModal] = React.useState('none')
 
-// 🐨 create an App component here and render the logo, the title ("Bookshelf"), a login button, and a register button.
-// 🐨 for fun, you can add event handlers for both buttons to alert that the button was clicked
+  function onLoginClickHandler(event) {
+    setOpenModal('login')
+  }
+  function onSignInClickHandler(event) {
+    setOpenModal('register')
+  }
+  function dismissDialog() {
+    setOpenModal('none')
+  }
+  function handleLoginSubmit(formData) {
+    console.log('login', formData)
+  }
+  function handleRegisterSubmit(formData) {
+    console.log('register', formData)
+  }
 
-// 🐨 use createRoot to render the <App /> to the root element
-// 💰 find the root element with: document.getElementById('root')
+  function LoginForm({onSubmit, buttonText}) {
+    function handleSubmit(event) {
+      event.preventDefault()
+      onSubmit({
+        username: event.target.elements.username.value,
+        password: event.target.elements.password.value,
+      })
+    }
+    return (
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="username">Username</label>
+        <input type={'text'} id="username"></input>
+        <label htmlFor="password">Password</label>
+        <input type={'password'} id="password"></input>
+        <button type="submit">{buttonText}</button>
+      </form>
+    )
+  }
+
+  return (
+    <>
+      <Logo height="80" width="80" />
+      <h1>Bookshelf</h1>
+      <form>
+        <button type="button" onClick={onLoginClickHandler}>
+          Login
+        </button>
+        <button type="button" onClick={onSignInClickHandler}>
+          Register
+        </button>
+      </form>
+      <Dialog
+        aria-label="Login Form"
+        isOpen={openModal === 'login'}
+        onDismiss={dismissDialog}
+      >
+        <button type="button" onClick={dismissDialog}>
+          Close
+        </button>
+        <LoginForm onSubmit={handleLoginSubmit} buttonText="Login" />
+      </Dialog>
+      <Dialog
+        aria-label="Register Form"
+        isOpen={openModal === 'register'}
+        onDismiss={dismissDialog}
+      >
+        <button type="button" onClick={dismissDialog}>
+          Close
+        </button>
+        <LoginForm onSubmit={handleRegisterSubmit} buttonText="Register" />
+      </Dialog>
+    </>
+  )
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(<App />)
